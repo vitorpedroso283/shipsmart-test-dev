@@ -99,6 +99,77 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Contacts"
+                ],
+                "summary": "Create a new contact",
+                "operationId": "779a1f2268bae1138e7ea7843dd88d90",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nome",
+                                    "email",
+                                    "cep"
+                                ],
+                                "properties": {
+                                    "nome": {
+                                        "type": "string",
+                                        "example": "Vitor Pedroso"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "vitor@example.com"
+                                    },
+                                    "telefone": {
+                                        "type": "string",
+                                        "example": "11999999999"
+                                    },
+                                    "cep": {
+                                        "type": "string",
+                                        "example": "01001000"
+                                    },
+                                    "estado": {
+                                        "type": "string",
+                                        "example": "SP"
+                                    },
+                                    "cidade": {
+                                        "type": "string",
+                                        "example": "São Paulo"
+                                    },
+                                    "bairro": {
+                                        "type": "string",
+                                        "example": "Sé"
+                                    },
+                                    "endereco": {
+                                        "type": "string",
+                                        "example": "Praça da Sé"
+                                    },
+                                    "numero": {
+                                        "type": "string",
+                                        "example": "100"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Contact created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
             }
         }
     },

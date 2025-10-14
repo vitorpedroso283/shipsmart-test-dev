@@ -13,14 +13,14 @@ class Contact extends Model
     protected $table = 'contatos';
 
     protected $fillable = [
-        'nome_contato',
-        'email_contato',
-        'telefone_contato',
+        'nome',
+        'email',
+        'telefone',
         'cep',
         'estado',
         'cidade',
         'bairro',
         'endereco',
-        'numero'
+        'numero',
     ];
 }
