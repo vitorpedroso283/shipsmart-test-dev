@@ -65,4 +65,20 @@ class ContactService
             throw new RuntimeException('Error creating contact.');
         }
     }
+
+    /**
+     * Delete a contact by ID
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool
+    {
+        try {
+            return $this->repo->delete($id);
+        } catch (\Throwable $e) {
+            Log::error('Error deleting contact', ['id' => $id, 'exception' => $e]);
+            throw new \RuntimeException('Error deleting contact.');
+        }
+    }
 }

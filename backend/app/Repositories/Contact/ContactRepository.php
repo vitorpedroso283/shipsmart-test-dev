@@ -30,8 +30,14 @@ class ContactRepository
         return $contact;
     }
 
-    public function delete(Contact $contact)
+    public function delete(int $id): bool
     {
-        return (bool) $contact->delete(); // soft delete
+        $contact = Contact::find($id);
+
+        if (! $contact) {
+            return false;
+        }
+
+        return (bool) $contact->delete();
     }
 }

@@ -159,4 +159,46 @@ class ContactController extends Controller
             return response()->json(['error' => 'Error fetching contact.'], 500);
         }
     }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/contacts/{id}",
+     *     summary="Delete a contact by ID",
+     *     tags={"Contacts"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Contact ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Contact deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Contact not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        try {
+            $deleted = $this->service->delete($id);
+
+            if (! $deleted) {
+                return response()->json(['error' => 'Contact not found.'], 404);
+            }
+
+            return response()->json(null, 204);
+        } catch (\Throwable $e) {
+            Log::error('Error deleting contact', ['id' => $id, 'exception' => $e]);
+            return response()->json(['error' => 'Error deleting contact.'], 500);
+        }
+    }
 }
