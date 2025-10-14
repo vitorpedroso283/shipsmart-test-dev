@@ -81,4 +81,21 @@ class ContactService
             throw new \RuntimeException('Error deleting contact.');
         }
     }
+
+    /**
+     * Update an existing contact
+     *
+     * @param int $id
+     * @param array $data
+     * @return \App\Models\Contact|bool
+     */
+    public function update(int $id, array $data)
+    {
+        try {
+            return $this->repo->update($id, $data);
+        } catch (\Throwable $e) {
+            Log::error('Error updating contact', ['id' => $id, 'exception' => $e]);
+            throw new \RuntimeException('Error updating contact');
+        }
+    }
 }

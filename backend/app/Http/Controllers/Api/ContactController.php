@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreContactRequest;
+use App\Http\Requests\UpdateContactRequest;
 use App\Services\Contact\ContactService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -199,6 +200,63 @@ class ContactController extends Controller
         } catch (\Throwable $e) {
             Log::error('Error deleting contact', ['id' => $id, 'exception' => $e]);
             return response()->json(['error' => 'Error deleting contact.'], 500);
+        }
+    }
+
+    /**
+     * @OA\Put(
+     *     path="/api/contacts/{id}",
+     *     summary="Update an existing contact",
+     *     tags={"Contacts"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Contact ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"nome","email","cep"},
+     *             @OA\Property(property="nome", type="string", example="Vitor Pedroso Updated"),
+     *             @OA\Property(property="email", type="string", example="vitor.updated@example.com"),
+     *             @OA\Property(property="telefone", type="string", example="11988888888"),
+     *             @OA\Property(property="cep", type="string", example="01310930"),
+     *             @OA\Property(property="estado", type="string", example="SP"),
+     *             @OA\Property(property="cidade", type="string", example="São Paulo"),
+     *             @OA\Property(property="bairro", type="string", example="Bela Vista"),
+     *             @OA\Property(property="endereco", type="string", example="Avenida Paulista"),
+     *             @OA\Property(property="numero", type="string", example="1578")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Contact updated successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Contact not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
+    public function update(UpdateContactRequest $request, int $id): JsonResponse
+    {
+        try {
+            $updated = $this->service->update($id, $request->validated());
+
+            if (! $updated) {
+                return response()->json(['error' => 'Contact not found.'], 404);
+            }
+
+            return response()->json($updated, 200);
+        } catch (\Throwable $e) {
+            Log::error('Error updating contact', ['id' => $id, 'exception' => $e]);
+            return response()->json(['error' => 'Error updating contact.'], 500);
         }
     }
 }

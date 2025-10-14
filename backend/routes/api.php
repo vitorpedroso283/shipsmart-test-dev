@@ -8,3 +8,4 @@ Route::get('/contacts', [ContactController::class, 'index'])->name('contact.inde
 Route::get('/contacts/{id}', [ContactController::class, 'show'])->name('contact.show');
 Route::post('/contacts', [ContactController::class, 'store'])->name('contact.store');
 Route::delete('/contacts/{id}', [ContactController::class, 'destroy'])->name('contact.destroy');
+Route::put('/contacts/{id}', [ContactController::class, 'update'])->name('contacts.update');

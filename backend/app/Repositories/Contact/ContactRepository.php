@@ -24,10 +24,16 @@ class ContactRepository
         return Contact::query()->create($data);
     }
 
-    public function update(Contact $contact, array $data)
+    public function update(int $id, array $data): ?Contact
     {
+        $contact = Contact::find($id);
+
+        if (! $contact) {
+            return null;
+        }
+
         $contact->update($data);
-        return $contact;
+        return $contact->fresh();
     }
 
     public function delete(int $id): bool
