@@ -146,13 +146,13 @@ class ContactController extends Controller
             $contact = $this->service->findById($id);
 
             if (! $contact) {
-                return response()->json(['error' => 'Contato não encontrado.'], 404);
+                return response()->json(['error' => 'Contact not found.'], 404);
             }
 
             return response()->json($contact);
         } catch (\Throwable $e) {
             Log::error('Error fetching contact', ['id' => $id, 'exception' => $e]);
-            return response()->json(['error' => 'Erro ao buscar contato.'], 500);
+            return response()->json(['error' => 'Error fetching contact.'], 500);
         }
     }
 }
