@@ -16,7 +16,7 @@ class ContactRepository
 
     public function find($id)
     {
-        return Contact::query()->findOrFail($id);
+        return Contact::query()->find($id);
     }
 
     public function create(array $data)

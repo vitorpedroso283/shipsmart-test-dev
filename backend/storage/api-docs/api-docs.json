@@ -171,6 +171,38 @@
                     }
                 }
             }
+        },
+        "/api/contacts/{id}": {
+            "get": {
+                "tags": [
+                    "Contacts"
+                ],
+                "summary": "Retrieve a contact by ID",
+                "operationId": "2a2c193f37e667891b7a6bc95e8e4132",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Contact ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Contact details"
+                    },
+                    "404": {
+                        "description": "Contact not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
         }
     },
     "tags": [

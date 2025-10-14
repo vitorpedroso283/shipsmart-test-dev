@@ -29,6 +29,22 @@ class ContactService
     }
 
     /**
+     * Find a contact by ID
+     *
+     * @param int $id
+     * @return \App\Models\Contact|null
+     */
+    public function findById(int $id)
+    {
+        try {
+            return $this->repo->find($id);
+        } catch (\Throwable $e) {
+            Log::error('Error finding contact', ['id' => $id, 'exception' => $e]);
+            throw new \RuntimeException('Error finding contact.');
+        }
+    }
+
+    /**
      * Create a new contact
      *
      * @param array $data

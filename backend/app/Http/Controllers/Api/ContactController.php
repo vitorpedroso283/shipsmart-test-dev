@@ -7,6 +7,7 @@ use App\Http\Requests\StoreContactRequest;
 use App\Services\Contact\ContactService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
@@ -110,6 +111,48 @@ class ContactController extends Controller
                 'error' => 'Erro ao criar contato.',
                 'details' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/contacts/{id}",
+     *     summary="Retrieve a contact by ID",
+     *     tags={"Contacts"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Contact ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Contact details",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Contact not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
+     *     )
+     * )
+     */
+    public function show(int $id): JsonResponse
+    {
+        try {
+            $contact = $this->service->findById($id);
+
+            if (! $contact) {
+                return response()->json(['error' => 'Contato não encontrado.'], 404);
+            }
+
+            return response()->json($contact);
+        } catch (\Throwable $e) {
+            Log::error('Error fetching contact', ['id' => $id, 'exception' => $e]);
+            return response()->json(['error' => 'Erro ao buscar contato.'], 500);
         }
     }
 }
