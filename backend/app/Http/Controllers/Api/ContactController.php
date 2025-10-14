@@ -107,8 +107,12 @@ class ContactController extends Controller
             $contact = $this->service->create($request->validated());
             return response()->json($contact, 201);
         } catch (Throwable $e) {
+            Log::error([
+                'error' => 'Error creating contact.',
+                'details' => $e->getMessage()
+            ]);
             return response()->json([
-                'error' => 'Erro ao criar contato.',
+                'error' => 'Error creating contact.',
                 'details' => $e->getMessage(),
             ], 500);
         }
