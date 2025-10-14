@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('bairro')->nullable();
             $table->string('endereco')->nullable();
             $table->string('numero')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -1,0 +1,111 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "ShipSmart API",
+        "description": "API backend para teste técnico de TechLead  na ShipSmart",
+        "contact": {
+            "name": "Vitor Pedroso",
+            "email": "vitorsamuel283@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Servidor local"
+        }
+    ],
+    "paths": {
+        "/api/contacts": {
+            "get": {
+                "tags": [
+                    "Contacts"
+                ],
+                "summary": "List all contacts (paginated)",
+                "operationId": "bc39494d59500e2d75e6f6648b43c8de",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page (default: 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of contacts",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "integer"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "nome": {
+                                                        "type": "string"
+                                                    },
+                                                    "email": {
+                                                        "type": "string"
+                                                    },
+                                                    "telefone": {
+                                                        "type": "string"
+                                                    },
+                                                    "cep": {
+                                                        "type": "string"
+                                                    },
+                                                    "estado": {
+                                                        "type": "string"
+                                                    },
+                                                    "cidade": {
+                                                        "type": "string"
+                                                    },
+                                                    "bairro": {
+                                                        "type": "string"
+                                                    },
+                                                    "endereco": {
+                                                        "type": "string"
+                                                    },
+                                                    "numero": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "last_page": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Contacts",
+            "description": "Endpoints for managing contacts"
+        }
+    ]
+}
