@@ -1,0 +1,10 @@
+{
+  "contacts": {
+    "title": "Contatos",
+    "new": "Novo Contato",
+    "edit": "Editar Contato",
+    "delete": "Excluir",
+    "save": "Salvar",
+    "cancel": "Cancelar"
+  }
+}

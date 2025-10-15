@@ -19,15 +19,15 @@
         "/api/contacts": {
             "get": {
                 "tags": [
-                    "Contacts"
+                    "Contatos"
                 ],
-                "summary": "List all contacts (paginated)",
+                "summary": "Listar todos os contatos (paginado)",
                 "operationId": "bc39494d59500e2d75e6f6648b43c8de",
                 "parameters": [
                     {
                         "name": "per_page",
                         "in": "query",
-                        "description": "Items per page (default: 10)",
+                        "description": "Itens por página (padrão: 10)",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -36,7 +36,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of contacts",
+                        "description": "Lista de contatos",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -102,9 +102,9 @@
             },
             "post": {
                 "tags": [
-                    "Contacts"
+                    "Contatos"
                 ],
-                "summary": "Create a new contact",
+                "summary": "Criar um novo contato",
                 "operationId": "779a1f2268bae1138e7ea7843dd88d90",
                 "requestBody": {
                     "required": true,
@@ -161,13 +161,13 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Contact created successfully"
+                        "description": "Contato criado com sucesso"
                     },
                     "422": {
-                        "description": "Validation error"
+                        "description": "Erro de validação"
                     },
                     "500": {
-                        "description": "Internal server error"
+                        "description": "Erro interno do servidor"
                     }
                 }
             }
@@ -175,15 +175,15 @@
         "/api/contacts/{id}": {
             "get": {
                 "tags": [
-                    "Contacts"
+                    "Contatos"
                 ],
-                "summary": "Retrieve a contact by ID",
+                "summary": "Buscar um contato pelo ID",
                 "operationId": "2a2c193f37e667891b7a6bc95e8e4132",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Contact ID",
+                        "description": "ID do contato",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -193,27 +193,27 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Contact details"
+                        "description": "Detalhes do contato"
                     },
                     "404": {
-                        "description": "Contact not found"
+                        "description": "Contato não encontrado"
                     },
                     "500": {
-                        "description": "Internal server error"
+                        "description": "Erro interno do servidor"
                     }
                 }
             },
             "put": {
                 "tags": [
-                    "Contacts"
+                    "Contatos"
                 ],
-                "summary": "Update an existing contact",
+                "summary": "Atualizar um contato existente",
                 "operationId": "45636eb97c78bd0e474d5507fde18f1a",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Contact ID",
+                        "description": "ID do contato",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -234,7 +234,7 @@
                                 "properties": {
                                     "nome": {
                                         "type": "string",
-                                        "example": "Vitor Pedroso Updated"
+                                        "example": "Vitor Pedroso Atualizado"
                                     },
                                     "email": {
                                         "type": "string",
@@ -276,27 +276,27 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Contact updated successfully"
+                        "description": "Contato atualizado com sucesso"
                     },
                     "404": {
-                        "description": "Contact not found"
+                        "description": "Contato não encontrado"
                     },
                     "500": {
-                        "description": "Internal server error"
+                        "description": "Erro interno do servidor"
                     }
                 }
             },
             "delete": {
                 "tags": [
-                    "Contacts"
+                    "Contatos"
                 ],
-                "summary": "Delete a contact by ID",
+                "summary": "Excluir um contato pelo ID",
                 "operationId": "a4fa6d0e82512d1fac868a7b61e6a2e7",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Contact ID",
+                        "description": "ID do contato",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -306,13 +306,13 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "Contact deleted successfully"
+                        "description": "Contato excluído com sucesso"
                     },
                     "404": {
-                        "description": "Contact not found"
+                        "description": "Contato não encontrado"
                     },
                     "500": {
-                        "description": "Internal server error"
+                        "description": "Erro interno do servidor"
                     }
                 }
             }
@@ -320,8 +320,8 @@
     },
     "tags": [
         {
-            "name": "Contacts",
-            "description": "Endpoints for managing contacts"
+            "name": "Contatos",
+            "description": "Endpoints para gerenciar contatos"
         }
     ]
 }

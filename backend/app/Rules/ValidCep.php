@@ -30,7 +30,7 @@ class ValidCep implements ValidationRule
         });
 
         if (! $result || isset($result['erro'])) {
-            $fail('The zip code is invalid');
+            $fail('CEP inválido');
         }
     }
 }

@@ -13,8 +13,8 @@ use Throwable;
 
 /**
  * @OA\Tag(
- *     name="Contacts",
- *     description="Endpoints for managing contacts"
+ *     name="Contatos",
+ *     description="Endpoints para gerenciar contatos"
  * )
  */
 class ContactController extends Controller
@@ -24,18 +24,18 @@ class ContactController extends Controller
     /**
      * @OA\Get(
      *     path="/api/contacts",
-     *     summary="List all contacts (paginated)",
-     *     tags={"Contacts"},
+     *     summary="Listar todos os contatos (paginado)",
+     *     tags={"Contatos"},
      *     @OA\Parameter(
      *         name="per_page",
      *         in="query",
      *         required=false,
-     *         description="Items per page (default: 10)",
+     *         description="Itens por página (padrão: 10)",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of contacts",
+     *         description="Lista de contatos",
      *         @OA\JsonContent(
      *             @OA\Property(property="current_page", type="integer"),
      *             @OA\Property(property="data", type="array",
@@ -59,20 +59,21 @@ class ContactController extends Controller
      *     )
      * )
      */
-
-
     public function index(Request $request): JsonResponse
     {
         $perPage = (int) $request->get('per_page', 10);
-        $contacts = $this->service->list($perPage);
+        $search = $request->get('search');
+
+        $contacts = $this->service->list($perPage, $search);
+
         return response()->json($contacts);
     }
 
     /**
      * @OA\Post(
      *     path="/api/contacts",
-     *     summary="Create a new contact",
-     *     tags={"Contacts"},
+     *     summary="Criar um novo contato",
+     *     tags={"Contatos"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -90,15 +91,15 @@ class ContactController extends Controller
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Contact created successfully",
+     *         description="Contato criado com sucesso",
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation error"
+     *         description="Erro de validação"
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Internal server error"
+     *         description="Erro interno do servidor"
      *     )
      * )
      */
@@ -109,11 +110,11 @@ class ContactController extends Controller
             return response()->json($contact, 201);
         } catch (Throwable $e) {
             Log::error([
-                'error' => 'Error creating contact.',
+                'error' => 'Erro ao criar contato.',
                 'details' => $e->getMessage()
             ]);
             return response()->json([
-                'error' => 'Error creating contact.',
+                'error' => 'Erro ao criar contato.',
                 'details' => $e->getMessage(),
             ], 500);
         }
@@ -122,26 +123,26 @@ class ContactController extends Controller
     /**
      * @OA\Get(
      *     path="/api/contacts/{id}",
-     *     summary="Retrieve a contact by ID",
-     *     tags={"Contacts"},
+     *     summary="Buscar um contato pelo ID",
+     *     tags={"Contatos"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Contact ID",
+     *         description="ID do contato",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Contact details",
+     *         description="Detalhes do contato",
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Contact not found"
+     *         description="Contato não encontrado"
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Internal server error"
+     *         description="Erro interno do servidor"
      *     )
      * )
      */
@@ -151,39 +152,39 @@ class ContactController extends Controller
             $contact = $this->service->findById($id);
 
             if (! $contact) {
-                return response()->json(['error' => 'Contact not found.'], 404);
+                return response()->json(['error' => 'Contato não encontrado.'], 404);
             }
 
             return response()->json($contact);
         } catch (\Throwable $e) {
-            Log::error('Error fetching contact', ['id' => $id, 'exception' => $e]);
-            return response()->json(['error' => 'Error fetching contact.'], 500);
+            Log::error('Erro ao buscar contato', ['id' => $id, 'exception' => $e]);
+            return response()->json(['error' => 'Erro ao buscar contato.'], 500);
         }
     }
 
     /**
      * @OA\Delete(
      *     path="/api/contacts/{id}",
-     *     summary="Delete a contact by ID",
-     *     tags={"Contacts"},
+     *     summary="Excluir um contato pelo ID",
+     *     tags={"Contatos"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Contact ID",
+     *         description="ID do contato",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=204,
-     *         description="Contact deleted successfully"
+     *         description="Contato excluído com sucesso"
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Contact not found"
+     *         description="Contato não encontrado"
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Internal server error"
+     *         description="Erro interno do servidor"
      *     )
      * )
      */
@@ -193,33 +194,33 @@ class ContactController extends Controller
             $deleted = $this->service->delete($id);
 
             if (! $deleted) {
-                return response()->json(['error' => 'Contact not found.'], 404);
+                return response()->json(['error' => 'Contato não encontrado.'], 404);
             }
 
             return response()->json(null, 204);
         } catch (\Throwable $e) {
-            Log::error('Error deleting contact', ['id' => $id, 'exception' => $e]);
-            return response()->json(['error' => 'Error deleting contact.'], 500);
+            Log::error('Erro ao excluir contato', ['id' => $id, 'exception' => $e]);
+            return response()->json(['error' => 'Erro ao excluir contato.'], 500);
         }
     }
 
     /**
      * @OA\Put(
      *     path="/api/contacts/{id}",
-     *     summary="Update an existing contact",
-     *     tags={"Contacts"},
+     *     summary="Atualizar um contato existente",
+     *     tags={"Contatos"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="Contact ID",
+     *         description="ID do contato",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
      *             required={"nome","email","cep"},
-     *             @OA\Property(property="nome", type="string", example="Vitor Pedroso Updated"),
+     *             @OA\Property(property="nome", type="string", example="Vitor Pedroso Atualizado"),
      *             @OA\Property(property="email", type="string", example="vitor.updated@example.com"),
      *             @OA\Property(property="telefone", type="string", example="11988888888"),
      *             @OA\Property(property="cep", type="string", example="01310930"),
@@ -232,15 +233,15 @@ class ContactController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Contact updated successfully"
+     *         description="Contato atualizado com sucesso"
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Contact not found"
+     *         description="Contato não encontrado"
      *     ),
      *     @OA\Response(
      *         response=500,
-     *         description="Internal server error"
+     *         description="Erro interno do servidor"
      *     )
      * )
      */
@@ -250,13 +251,13 @@ class ContactController extends Controller
             $updated = $this->service->update($id, $request->validated());
 
             if (! $updated) {
-                return response()->json(['error' => 'Contact not found.'], 404);
+                return response()->json(['error' => 'Contato não encontrado.'], 404);
             }
 
             return response()->json($updated, 200);
         } catch (\Throwable $e) {
-            Log::error('Error updating contact', ['id' => $id, 'exception' => $e]);
-            return response()->json(['error' => 'Error updating contact.'], 500);
+            Log::error('Erro ao atualizar contato', ['id' => $id, 'exception' => $e]);
+            return response()->json(['error' => 'Erro ao atualizar contato.'], 500);
         }
     }
 }

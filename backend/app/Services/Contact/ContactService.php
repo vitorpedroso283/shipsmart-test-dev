@@ -13,23 +13,23 @@ class ContactService
     public function __construct(private readonly ContactRepository $repo) {}
 
     /**
-     * Get paginated list of contacts
+     * Obter lista paginada de contatos
      *
      * @param int $perPage
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function list(int $perPage = 10)
+    public function list(?int $perPage = 10, ?string $search = null)
     {
         try {
-            return $this->repo->paginate($perPage);
+            return $this->repo->paginate($perPage, $search);
         } catch (Throwable $e) {
-            Log::error('Error listing contacts', ['e' => $e->getMessage()]);
-            throw new RuntimeException('Error listing contacts.');
+            Log::error('Erro ao listar contatos', ['e' => $e->getMessage()]);
+            throw new RuntimeException('Erro ao listar contatos.');
         }
     }
 
     /**
-     * Find a contact by ID
+     * Buscar um contato pelo ID
      *
      * @param int $id
      * @return \App\Models\Contact|null
@@ -38,14 +38,14 @@ class ContactService
     {
         try {
             return $this->repo->find($id);
-        } catch (\Throwable $e) {
-            Log::error('Error finding contact', ['id' => $id, 'exception' => $e]);
-            throw new \RuntimeException('Error finding contact.');
+        } catch (Throwable $e) {
+            Log::error('Erro ao buscar contato', ['id' => $id, 'exception' => $e]);
+            throw new RuntimeException('Erro ao buscar contato.');
         }
     }
 
     /**
-     * Create a new contact
+     * Criar um novo contato
      *
      * @param array $data
      * @return \App\Models\Contact
@@ -61,13 +61,13 @@ class ContactService
             return $contact;
         } catch (Throwable $e) {
             DB::rollBack();
-            Log::error('Error creating contact', ['exception' => $e]);
-            throw new RuntimeException('Error creating contact.');
+            Log::error('Erro ao criar contato', ['exception' => $e]);
+            throw new RuntimeException('Erro ao criar contato.');
         }
     }
 
     /**
-     * Delete a contact by ID
+     * Excluir um contato pelo ID
      *
      * @param int $id
      * @return bool
@@ -76,14 +76,14 @@ class ContactService
     {
         try {
             return $this->repo->delete($id);
-        } catch (\Throwable $e) {
-            Log::error('Error deleting contact', ['id' => $id, 'exception' => $e]);
-            throw new \RuntimeException('Error deleting contact.');
+        } catch (Throwable $e) {
+            Log::error('Erro ao excluir contato', ['id' => $id, 'exception' => $e]);
+            throw new RuntimeException('Erro ao excluir contato.');
         }
     }
 
     /**
-     * Update an existing contact
+     * Atualizar um contato existente
      *
      * @param int $id
      * @param array $data
@@ -93,9 +93,9 @@ class ContactService
     {
         try {
             return $this->repo->update($id, $data);
-        } catch (\Throwable $e) {
-            Log::error('Error updating contact', ['id' => $id, 'exception' => $e]);
-            throw new \RuntimeException('Error updating contact');
+        } catch (Throwable $e) {
+            Log::error('Erro ao atualizar contato', ['id' => $id, 'exception' => $e]);
+            throw new RuntimeException('Erro ao atualizar contato.');
         }
     }
 }
