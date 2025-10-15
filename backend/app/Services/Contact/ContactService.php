@@ -5,7 +5,9 @@ namespace App\Services\Contact;
 use App\Repositories\Contact\ContactRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Throwable;
 
 class ContactService
@@ -96,6 +98,32 @@ class ContactService
         } catch (Throwable $e) {
             Log::error('Erro ao atualizar contato', ['id' => $id, 'exception' => $e]);
             throw new RuntimeException('Erro ao atualizar contato.');
+        }
+    }
+
+    /**
+     * Exportar contatos para CSV
+     *
+     * @param array $ids
+     * @return BinaryFileResponse
+     */
+    public function exportCsv(array $ids = []): BinaryFileResponse
+    {
+        try {
+            $fileName = 'contatos_' . now()->format('Ymd_His') . '.csv';
+
+            return Excel::download(
+                new \App\Exports\ContactsExport($ids),
+                $fileName,
+                \Maatwebsite\Excel\Excel::CSV
+            );
+        } catch (Throwable $e) {
+            Log::error('Erro ao exportar contatos', [
+                'ids' => $ids,
+                'exception' => $e->getMessage(),
+            ]);
+
+            throw new RuntimeException('Erro ao exportar contatos.');
         }
     }
 }

@@ -9,6 +9,8 @@ use App\Services\Contact\ContactService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 /**
@@ -259,5 +261,29 @@ class ContactController extends Controller
             Log::error('Erro ao atualizar contato', ['id' => $id, 'exception' => $e]);
             return response()->json(['error' => 'Erro ao atualizar contato.'], 500);
         }
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/contacts/export",
+     *     summary="Exportar contatos selecionados para CSV",
+     *     tags={"Contatos"},
+     *     @OA\Parameter(
+     *         name="ids",
+     *         in="query",
+     *         required=false,
+     *         description="IDs separados por vírgula dos contatos a exportar. Se omitido, exporta todos.",
+     *         @OA\Schema(type="string", example="1,2,3")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Arquivo CSV gerado"
+     *     )
+     * )
+     */
+    public function export(Request $request): BinaryFileResponse
+    {
+        $ids = $request->get('ids') ? explode(',', $request->get('ids')) : [];
+        return $this->service->exportCsv($ids);
     }
 }

@@ -9,7 +9,7 @@
                 <div class="flex-1 flex justify-start items-center ml-10 space-x-4">
                     <router-link to="/contacts"
                         class="text-gray-500 hover:bg-gray-50 hover:text-gray-900 px-3 py-2 rounded-md font-medium text-sm">
-                        Contatos
+                        {{ t("contacts.title") }}
                     </router-link>
                 </div>
 
@@ -23,15 +23,13 @@
 </template>
 
 <script setup lang="ts">
-import Dropdown from 'primevue/dropdown'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+import Dropdown from "primevue/dropdown"
+import { useI18n } from "vue-i18n"
 
-const router = useRouter()
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 
 const languages = [
-    { label: '🇧🇷 PT', value: 'pt' },
-    { label: '🇺🇸 EN', value: 'en' }
+    { label: "🇧🇷 PT", value: "pt" },
+    { label: "🇺🇸 EN", value: "en" },
 ]
 </script>

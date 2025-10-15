@@ -9,3 +9,4 @@ Route::get('/contacts/{id}', [ContactController::class, 'show'])->name('contact.
 Route::post('/contacts', [ContactController::class, 'store'])->name('contact.store');
 Route::delete('/contacts/{id}', [ContactController::class, 'destroy'])->name('contact.destroy');
 Route::put('/contacts/{id}', [ContactController::class, 'update'])->name('contacts.update');
+Route::get('/contacts/export', [ContactController::class, 'export'])->name('contacts.export');
