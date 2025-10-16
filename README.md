@@ -179,6 +179,14 @@ Em projetos reais, costumo usar **Postman Collections** para facilitar a integra
 
 ---
 
+### ⚡️ Limite de Requisições (Rate Limiting)
+
+Implementei **rate limiting** na API para garantir estabilidade e evitar abuso de requisições. Todas as rotas estão protegidas pelo middleware `throttle:100,1`, que limita **100 requisições por minuto por IP**.
+
+Isso é suficiente para ambientes de teste e demonstração, evitando sobrecarga e simulando um comportamento mais próximo de um ambiente real de produção.
+
+---
+
 ## ⚡️ Decisões de Simplicidade e Design <a id="decisoes"></a>
 
 - O enunciado pedia uma aplicação direta e objetiva, então mantive o foco em resolver o problema com clareza.
