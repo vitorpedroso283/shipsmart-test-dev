@@ -140,7 +140,7 @@ git clone git@github.com:vitorpedroso283/shipsmart-test-dev.git
 cd shipsmart-test-dev
 ```
 
-### 2️⃣ Configure os arquivos `.env`, gere a chave e execute as migrações
+### 2️⃣ Configure os arquivos `.env`
 
 Antes de iniciar, é necessário copiar os arquivos de exemplo de ambiente para ativar as variáveis locais:
 
@@ -154,15 +154,14 @@ touch backend/database/database.sqlite
 
 # Frontend
 cp frontend/.env.example frontend/.env
-
-docker exec -it shipsmart_backend php artisan key:generate
-docker exec -it shipsmart_backend php artisan migrate
 ```
 
-### 3️⃣ Suba os containers
+### 3️⃣ Suba os containers, gere a chave e execute as migrações
 
 ```bash
 docker compose up -d --build
+docker exec -it shipsmart_backend php artisan key:generate
+docker exec -it shipsmart_backend php artisan migrate
 ```
 
 ### 4️⃣ Acesse as aplicações
