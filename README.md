@@ -129,6 +129,9 @@ SHIPS-MART TEST DEV/
 ## 🚀 Como Rodar o Projeto <a id="como-rodar"></a>
 
 ### 1️⃣ Clone o repositório
+> ⚠️ **Pré-requisitos:** Docker e Docker Compose instalados 
+> 💡 Todo o ambiente já está containerizado. Não é necessário ter PHP, Composer ou Node instalados localmente.
+
 
 ```bash
 # HTTPS
