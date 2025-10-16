@@ -13,6 +13,7 @@ O objetivo foi entregar uma solução funcional, bem estruturada e coerente com 
 - [🚀 Como Rodar o Projeto](#como-rodar)
 - [✅ Testes e Documentação](#testes)
 - [⚡️ Decisões de Simplicidade e Design](#decisoes)
+- [⚙️ Configuração de Ambiente (`.env`)](#env)
 - [🙌 Considerações Finais](#consideracoes)
 
 ---
@@ -20,6 +21,7 @@ O objetivo foi entregar uma solução funcional, bem estruturada e coerente com 
 ## 🛠️ Contexto e Decisões de Arquitetura <a id="contexto"></a>
 
 O desafio consistia em criar um CRUD de contatos com integração de CEP, paginação e envio de e-mails, além de configurar tudo com Docker.
+✅ **Todos os requisitos do enunciado foram integralmente atendidos**, com implementação completa de backend, frontend, filas, cache e envio de e-mails.
 
 Mantive a solução enxuta e direta, respeitando o escopo do teste e demonstrando domínio técnico, organização e boas práticas de arquitetura. O foco foi construir algo realista e escalável, mas sem overengineering.
 
@@ -34,6 +36,7 @@ Mantive a solução enxuta e direta, respeitando o escopo do teste e demonstrand
 - Configurei **i18n** para internacionalização e facilidade de expansão futura, mesmo sendo um teste simples.
 - Criei **meus próprios Dockerfiles** ao invés de usar o Laravel Sail. Isso tornou a imagem mais leve, compatível com produção e alinhada ao padrão que costumo usar em projetos reais.
 - A estrutura de containers está centralizada na raiz com `docker-compose.yml`, garantindo praticidade para levantar todo o ambiente de uma vez.
+- O projeto já vem configurado com **Redis** e **MailHog** via Docker, facilitando os testes de cache, filas e envio de e-mails sem necessidade de ajustes adicionais. A explicação detalhada do `.env` está descrita na seção [Configuração de Ambiente](#env).
 
 ---
 
@@ -66,7 +69,7 @@ Mantive a solução enxuta e direta, respeitando o escopo do teste e demonstrand
 ## 🏗️ Estrutura e Organização do Projeto <a id="estrutura"></a>
 
 ```
-SHIPS-MART TEST DEV/
+shipsmart-test-dev/
 │
 ├── backend/
 │   ├── app/
@@ -129,9 +132,10 @@ SHIPS-MART TEST DEV/
 ## 🚀 Como Rodar o Projeto <a id="como-rodar"></a>
 
 ### 1️⃣ Clone o repositório
-> ⚠️ **Pré-requisitos:** Docker e Docker Compose instalados 
-> 💡 Todo o ambiente já está containerizado. Não é necessário ter PHP, Composer ou Node instalados localmente.
 
+> ⚠️ **Pré-requisitos:** Docker e Docker Compose instalados.
+>
+> 💡 Todo o ambiente já está containerizado, não é necessário ter PHP, Composer ou Node instalados localmente.
 
 ```bash
 # HTTPS
@@ -206,14 +210,47 @@ Isso é suficiente para ambientes de teste e demonstração, evitando sobrecarga
 
 ---
 
-## ⚡️ Decisões de Simplicidade e Design <a id="decisoes"></a>
+## ⚙️ Configuração de Ambiente (`.env`) <a id="env"></a>
 
-- O enunciado pedia uma aplicação direta e objetiva, então mantive o foco em resolver o problema com clareza.
-- Evitei adicionar estruturas complexas como DDD ou microserviços, mantendo o projeto leve e intuitivo.
-- PrimeVue foi usado para velocidade de entrega; em produção eu customizaria tudo com Tailwind.
-- O ViaCEP foi implementado com cache e fallback; em um cenário real, a URL viria do `.env`.
-- As notificações substituíram o uso padrão de Mailable, deixando o envio expansível para novos canais.
-- Criei meus próprios Dockerfiles ao invés do Sail, para deixar a imagem leve e mais próxima de produção real.
+O `docker-compose.yml` já inclui os serviços essenciais como **Redis**, **MailHog** e o **banco SQLite**, todos prontos para uso imediato.
+O MailHog pode ser acessado em [http://localhost:8025](http://localhost:8025) para visualizar os e-mails enviados durante os testes de notificação.
+
+O projeto utiliza um `.env` otimizado para Docker, com foco em cache, filas e notificações.
+
+### 🔹 Cache, Sessões e Filas
+
+Utiliza **Redis** para cache, filas e sessões, garantindo desempenho e consistência entre containers:
+
+```env
+CACHE_STORE=redis
+SESSION_DRIVER=database
+QUEUE_CONNECTION=redis
+REDIS_CLIENT=phpredis
+REDIS_HOST=redis
+REDIS_PORT=6379
+```
+
+### 🔹 E-mail (MailHog)
+
+O envio de e-mails é realizado via **MailHog**, facilitando testes locais sem necessidade de SMTP externo:
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=mailhog
+MAIL_PORT=1025
+MAIL_FROM_ADDRESS="no-reply@shipsmart.local"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+### 🔹 Notificações
+
+O sistema de **Notifications** está configurado para enviar mensagens para o e-mail principal definido:
+
+```env
+NOTIFICATION_MAIL=vitorsamuel283@gmail.com
+```
+
+Essas variáveis já funcionam automaticamente dentro do ambiente Docker, sem necessidade de ajustes manuais.
 
 ---
 
@@ -225,3 +262,7 @@ Busquei equilíbrio entre boa arquitetura e simplicidade, evitando exageros e fo
 Cada decisão foi pensada para mostrar conhecimento técnico aplicado, mantendo a entrega leve, compreensível e profissional.
 
 **Obrigado pela oportunidade! ☕️**
+
+---
+📬 **Contato**
+[LinkedIn](https://linkedin.com/in/vitorpedroso) • [GitHub](https://github.com/vitorpedroso283)
