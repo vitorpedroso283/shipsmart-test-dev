@@ -112,12 +112,42 @@ function confirmDelete(id: number) {
 }
 
 function exportSelected() {
-    const ids = selectedItems.value.map((i: any) => i.id).join(", ")
+    const ids = selectedItems.value.map((i: any) => i.id);
+
+    if (!ids.length) {
+        toast.add({
+            severity: "warn",
+            summary: t("contacts.export"),
+            detail: t("contacts.no_selection"),
+            life: 3000,
+        });
+        return;
+    }
+
     toast.add({
         severity: "info",
         summary: t("contacts.export"),
-        detail: `${t("contacts.exporting")}: ${ids}`,
-        life: 3000,
-    })
+        detail: t("contacts.exporting"),
+        life: 1500,
+    });
+
+    store
+        .exportCsv(ids)
+        .then(() => {
+            toast.add({
+                severity: "success",
+                summary: t("contacts.export"),
+                detail: t("contacts.export_success"),
+                life: 3000,
+            });
+        })
+        .catch(() => {
+            toast.add({
+                severity: "error",
+                summary: t("contacts.export"),
+                detail: t("contacts.export_error"),
+                life: 4000,
+            });
+        });
 }
 </script>

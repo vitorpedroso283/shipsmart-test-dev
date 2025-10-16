@@ -10,6 +10,9 @@ services:
       - ./backend:/var/www/html
     depends_on:
       - redis
+      - mailhog
+    networks:
+      - shipsmart_net
 
   redis:
     image: redis:alpine
@@ -19,6 +22,21 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --save 20 1 --loglevel warning
+    networks:
+      - shipsmart_net
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: shipsmart_mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - shipsmart_net
 
 volumes:
   redis_data:
+
+networks:
+  shipsmart_net:
+    driver: bridge

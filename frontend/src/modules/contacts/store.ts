@@ -55,5 +55,13 @@ export const useContactsStore = defineStore("contacts", {
       await ContactsApi.delete(id);
       this.items = this.items.filter((c) => c.id !== id);
     },
+
+    async exportCsv(ids: number[]) {
+      try {
+        await ContactsApi.exportCsv(ids);
+      } catch (error) {
+        throw new Error("Erro ao exportar contatos.");
+      }
+    },
   },
 });

@@ -40,4 +40,21 @@ export const ContactsApi = {
   delete: async (id: number): Promise<void> => {
     await api.delete(`/contacts/${id}`);
   },
+
+  exportCsv: async (ids: number[] = []): Promise<void> => {
+    const params = ids.length ? { ids: ids.join(",") } : {};
+    const response = await api.get("/contacts/export", {
+      params,
+      responseType: "blob",
+    });
+
+    const blob = new Blob([response.data], { type: "text/csv;charset=utf-8;" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `contatos_${new Date().toISOString()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  },
 };

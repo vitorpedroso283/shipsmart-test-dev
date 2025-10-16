@@ -2,96 +2,97 @@
 # Etapa base — PHP CLI + dependências + Composer
 # ------------------------------------------------------
     FROM php:8.3-cli AS base
-# ----------------------------------------
-# Dependências do sistema
-# ----------------------------------------
-RUN apt-get update && apt-get install -y \
-    git unzip zip curl \
-    libpng-dev libjpeg-dev libfreetype6-dev \
-    libxml2-dev libcurl4-openssl-dev \
-    libonig-dev libzip-dev libicu-dev \
-    supervisor cmake pkg-config libssl-dev \
-    s3270 \
-    libncurses6 \
-    libx11-6 \
-    libxaw7 \
-    libxmu6 \
-    libxt6 \
-    inotify-tools \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
-# ----------------------------------------
-# Extensões PHP nativas
-# ----------------------------------------
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-    gd pdo pdo_mysql mbstring exif pcntl bcmath xml curl dom zip sockets intl opcache mysqli
-
-# ----------------------------------------
-# Extensões via PECL (Swoole, Redis, MongoDB)
-# ----------------------------------------
-RUN pecl install swoole redis \
-    && docker-php-ext-enable swoole redis
-
-# MongoDB client (com SSL)
-RUN git clone --branch 1.27.2 https://github.com/mongodb/mongo-c-driver.git \
-    && cd mongo-c-driver && mkdir cmake-build && cd cmake-build \
-    && cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DENABLE_SSL=OPENSSL .. \
-    && make -j$(nproc) && make install \
-    && cd ../.. && rm -rf mongo-c-driver \
-    && pecl install mongodb-1.20.0 \
-    && docker-php-ext-enable mongodb
-
-# Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# ----------------------------------------
-# Configurações PHP
-# ----------------------------------------
-RUN echo "upload_max_filesize=2G" > /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "post_max_size=2G" >> /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "max_execution_time=90" > /usr/local/etc/php/conf.d/timeouts.ini \
-    && echo "max_input_time=90" >> /usr/local/etc/php/conf.d/timeouts.ini \
-    && echo "memory_limit=2G" > /usr/local/etc/php/conf.d/memory.ini \
-    && echo "max_file_uploads=100" > /usr/local/etc/php/conf.d/file_uploads.ini
-
-WORKDIR /var/www/html
-
-# ------------------------------------------------------
-# Etapa de build da aplicação Laravel (dentro de /backend)
-# ------------------------------------------------------
-FROM base AS build
-
-WORKDIR /var/www/html
-
-# Copia apenas os arquivos composer do backend (cache eficiente)
-COPY backend/composer.json backend/composer.lock ./
-
-# Instala dependências PHP
-RUN composer install \
-    --no-interaction \
-    --no-progress \
-    --optimize-autoloader \
-    --no-scripts
-
-# Copia todo o código da API
-COPY backend/ .
-
-# Permissões
-RUN mkdir -p \
-    /var/www/.config/psysh \
-    storage/framework/cache \
-    storage/framework/sessions \
-    storage/framework/views \
-    storage/logs \
-    && chown -R www-data:www-data /var/www/.config /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/.config /var/www/html/storage /var/www/html/bootstrap/cache
-
-USER www-data
-
-# ------------------------------------------------------
-# Etapa final — execução
-# ------------------------------------------------------
-EXPOSE 8000
-
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+    # ----------------------------------------
+    # Dependências do sistema
+    # ----------------------------------------
+    RUN apt-get update && apt-get install -y \
+        git unzip zip curl \
+        libpng-dev libjpeg-dev libfreetype6-dev \
+        libxml2-dev libcurl4-openssl-dev \
+        libonig-dev libzip-dev libicu-dev \
+        supervisor cmake pkg-config libssl-dev \
+        s3270 \
+        libncurses6 \
+        libx11-6 \
+        libxaw7 \
+        libxmu6 \
+        libxt6 \
+        inotify-tools \
+        && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+    
+    # ----------------------------------------
+    # Extensões PHP nativas
+    # ----------------------------------------
+    RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+        && docker-php-ext-install -j$(nproc) \
+        gd pdo pdo_mysql mbstring exif pcntl bcmath xml curl dom zip sockets intl opcache mysqli
+    
+    # ----------------------------------------
+    # Extensões via PECL (Swoole, Redis)
+    # ----------------------------------------
+    RUN pecl install swoole redis \
+        && docker-php-ext-enable swoole redis
+    
+    # Composer
+    COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+    
+    # ----------------------------------------
+    # Configurações PHP
+    # ----------------------------------------
+    RUN echo "upload_max_filesize=2G" > /usr/local/etc/php/conf.d/uploads.ini \
+        && echo "post_max_size=2G" >> /usr/local/etc/php/conf.d/uploads.ini \
+        && echo "max_execution_time=90" > /usr/local/etc/php/conf.d/timeouts.ini \
+        && echo "max_input_time=90" >> /usr/local/etc/php/conf.d/timeouts.ini \
+        && echo "memory_limit=2G" > /usr/local/etc/php/conf.d/memory.ini \
+        && echo "max_file_uploads=100" > /usr/local/etc/php/conf.d/file_uploads.ini
+    
+    WORKDIR /var/www/html
+    
+    # ------------------------------------------------------
+    # Etapa de build da aplicação Laravel (dentro de /backend)
+    # ------------------------------------------------------
+    FROM base AS build
+    
+    WORKDIR /var/www/html
+    
+    # Copia apenas os arquivos composer do backend (cache eficiente)
+    COPY backend/composer.json backend/composer.lock ./
+    
+    # Instala dependências PHP
+    RUN composer install \
+        --no-interaction \
+        --no-progress \
+        --optimize-autoloader \
+        --no-scripts
+    
+    # Copia todo o código da API
+    COPY backend/ .
+    
+    # Copia .env.example → .env e gera chave automaticamente
+    RUN cp .env.example .env \
+        && php artisan key:generate \
+        && php artisan config:cache || true
+    
+    # Cria diretórios e permissões corretas
+    RUN mkdir -p \
+        /var/www/.config/psysh \
+        storage/framework/cache \
+        storage/framework/sessions \
+        storage/framework/views \
+        storage/logs \
+        && chown -R www-data:www-data /var/www/.config /var/www/html/storage /var/www/html/bootstrap/cache \
+        && chmod -R 775 /var/www/.config /var/www/html/storage /var/www/html/bootstrap/cache
+    
+    # ------------------------------------------------------
+    # Supervisor — servidor e workers das filas
+    # ------------------------------------------------------
+    RUN mkdir -p /etc/supervisor/conf.d
+    COPY backend/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+    
+    # ------------------------------------------------------
+    # Execução
+    # ------------------------------------------------------
+    EXPOSE 8000
+    CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+    

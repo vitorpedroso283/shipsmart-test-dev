@@ -26,7 +26,7 @@ export function useCep(form: any) {
       toast.add({
         severity: "error",
         summary: "Não encontrado",
-        detail: "CEP não localizado no ViaCEP.",
+        detail: "CEP inválido.",
         life: 3000,
       });
       return;

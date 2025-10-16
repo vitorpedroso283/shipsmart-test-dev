@@ -2,10 +2,13 @@
 
 namespace App\Services\Contact;
 
+use App\Notifications\ContactCreatedNotification;
 use App\Repositories\Contact\ContactRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Notifications\AnonymousNotifiable;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Throwable;
@@ -59,6 +62,11 @@ class ContactService
         try {
             $contact = $this->repo->create($data);
             DB::commit();
+
+            Notification::send(
+                (new AnonymousNotifiable)->route('mail', env('NOTIFICATION_MAIL')),
+                new ContactCreatedNotification($contact)
+            );            
 
             return $contact;
         } catch (Throwable $e) {

@@ -28,7 +28,7 @@ export async function getAddressByCep(
     if (data.erro) return null;
     return data;
   } catch (err) {
-    console.error("Erro ao consultar ViaCEP:", err);
+    console.error("Erro ao consultar CEP:", err);
     return null;
   }
 }
