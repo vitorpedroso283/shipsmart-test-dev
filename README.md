@@ -31,6 +31,7 @@ Mantive a solução enxuta e direta, respeitando o escopo do teste e demonstrand
 - Em produção, a URL do ViaCEP e outras integrações ficariam configuradas em `.env` ou no `config/services.php`, garantindo flexibilidade de ambiente.
 - Substituí o sistema de `Mailable` padrão do Laravel pelo **sistema de Notifications**, pois é mais escalável e facilmente extensível para múltiplos canais (e-mail, SMS, Slack, etc.).
 - Usei **PrimeVue** para acelerar a criação das interfaces e focar nas regras de negócio. Em um projeto real, eu criaria componentes próprios com **TailwindCSS**.
+- VeeValidate + Yup foram usados para validação reativa e tipada no frontend, integrados com o i18n para mensagens localizadas e com o tipo Contact para segurança de dados.
 - Configurei **i18n** para internacionalização e facilidade de expansão futura, mesmo sendo um teste simples.
 - Criei **meus próprios Dockerfiles** ao invés de usar o Laravel Sail. Isso tornou a imagem mais leve, compatível com produção e alinhada ao padrão que costumo usar em projetos reais.
 - A estrutura de containers está centralizada na raiz com `docker-compose.yml`, garantindo praticidade para levantar todo o ambiente de uma vez.
@@ -131,7 +132,12 @@ SHIPS-MART TEST DEV/
 ### 1️⃣ Clone o repositório
 
 ```bash
+# HTTPS
 git clone https://github.com/vitorpedroso283/shipsmart-test-dev.git
+
+# ou via SSH
+git clone git@github.com:vitorpedroso283/shipsmart-test-dev.git
+
 cd shipsmart-test-dev
 ```
 
