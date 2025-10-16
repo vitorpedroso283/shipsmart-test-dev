@@ -69,11 +69,6 @@ RUN composer install \
 # Copia todo o código da API
 COPY backend/ .
 
-# Copia .env.example .env e gera chave automaticamente
-RUN cp .env.example .env \
-    && php artisan key:generate \
-    && php artisan config:cache || true
-
 # Cria diretórios e permissões corretas
 RUN mkdir -p \
     /var/www/.config/psysh \

@@ -4,57 +4,25 @@
             {{ isEdit ? t("contacts.edit") : t("contacts.new") }}
         </h2>
 
-        <form @submit.prevent="handleSubmit(onSubmit)" class="space-y-6">
+        <form @submit.prevent="save" class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                    <InputText v-model="values.nome" :placeholder="t('contacts.name')" />
-                    <small class="text-red-500">{{ errors.nome }}</small>
-                </div>
-
-                <div>
-                    <InputText v-model="values.email" type="email" :placeholder="t('contacts.email')" />
-                    <small class="text-red-500">{{ errors.email }}</small>
-                </div>
-
-                <div>
-                    <InputMask v-model="values.telefone" mask="(99) 99999-9999" :placeholder="t('contacts.phone')" />
-                    <small class="text-red-500">{{ errors.telefone }}</small>
-                </div>
+                <InputText v-model="form.nome" :placeholder="t('contacts.name')" />
+                <InputText v-model="form.email" type="email" :placeholder="t('contacts.email')" />
+                <InputMask v-model="form.telefone" mask="(99) 99999-9999" :placeholder="t('contacts.phone')" />
 
                 <div class="flex items-center gap-2">
-                    <div class="flex-1">
-                        <InputMask v-model="values.cep" mask="99999-999" :placeholder="t('contacts.cep')"
-                            @blur="fetchCep" />
-                        <small class="text-red-500">{{ errors.cep }}</small>
-                    </div>
+                    <InputMask v-model="form.cep" mask="99999-999" :placeholder="t('contacts.cep')" class="flex-1"
+                        @blur="fetchCep" />
                     <Button icon="pi pi-search" outlined type="button" :loading="loadingCep" @click="fetchCep" />
                 </div>
 
-                <div>
-                    <Dropdown v-model="values.estado" :options="estados" optionLabel="label" optionValue="value"
-                        :placeholder="t('contacts.state')" filter class="w-full" />
-                    <small class="text-red-500">{{ errors.estado }}</small>
-                </div>
+                <Select v-model="form.estado" :options="estados" optionLabel="label" optionValue="value"
+                    :placeholder="t('contacts.state')" class="w-full" filter showClear />
 
-                <div>
-                    <InputText v-model="values.cidade" :placeholder="t('contacts.city')" />
-                    <small class="text-red-500">{{ errors.cidade }}</small>
-                </div>
-
-                <div>
-                    <InputText v-model="values.bairro" :placeholder="t('contacts.neighborhood')" />
-                    <small class="text-red-500">{{ errors.bairro }}</small>
-                </div>
-
-                <div>
-                    <InputText v-model="values.endereco" :placeholder="t('contacts.address')" />
-                    <small class="text-red-500">{{ errors.endereco }}</small>
-                </div>
-
-                <div>
-                    <InputText v-model="values.numero" :placeholder="t('contacts.number')" />
-                    <small class="text-red-500">{{ errors.numero }}</small>
-                </div>
+                <InputText v-model="form.cidade" :placeholder="t('contacts.city')" />
+                <InputText v-model="form.bairro" :placeholder="t('contacts.neighborhood')" />
+                <InputText v-model="form.endereco" :placeholder="t('contacts.address')" />
+                <InputText v-model="form.numero" :placeholder="t('contacts.number')" />
             </div>
 
             <div class="flex justify-end gap-3 pt-6 border-t">
@@ -67,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 import { useContactsStore } from "@/modules/contacts/store"
@@ -74,12 +43,23 @@ import { estados } from "@/modules/contacts/data/estados"
 import { useCep } from "@/composables/useCep"
 import InputText from "primevue/inputtext"
 import InputMask from "primevue/inputmask"
-import Dropdown from "primevue/dropdown"
+import Select from "primevue/select" 
 import Button from "primevue/button"
 import { useToast } from "primevue/usetoast"
-import { useForm } from "vee-validate"
-import * as yup from "yup"
-import type { Contact } from "@/modules/contacts/types"
+
+// ✅ Tipo Contact
+export interface Contact {
+    id?: number
+    nome: string
+    email: string
+    telefone: string
+    cep: string
+    estado: string
+    cidade: string
+    bairro: string
+    endereco: string
+    numero: string
+}
 
 const { t } = useI18n()
 const route = useRoute()
@@ -87,49 +67,34 @@ const router = useRouter()
 const store = useContactsStore()
 const toast = useToast()
 
-// ✅ Esquema Yup com base no tipo Contact
-const contactSchema = yup.object({
-    nome: yup.string().required(t("contacts.required")),
-    email: yup.string().email(t("contacts.invalid_email")).required(t("contacts.required")),
-    telefone: yup.string().required(t("contacts.required")),
-    cep: yup.string().required(t("contacts.required")),
-    estado: yup.string().required(t("contacts.required")),
-    cidade: yup.string().required(t("contacts.required")),
-    bairro: yup.string().required(t("contacts.required")),
-    endereco: yup.string().required(t("contacts.required")),
-    numero: yup.string().required(t("contacts.required")),
+const form = ref<Contact>({
+    nome: "",
+    email: "",
+    telefone: "",
+    cep: "",
+    estado: "",
+    cidade: "",
+    bairro: "",
+    endereco: "",
+    numero: "",
 })
 
-const { handleSubmit, errors, values, setValues } = useForm<Contact>({
-    validationSchema: contactSchema,
-    initialValues: {
-        nome: "",
-        email: "",
-        telefone: "",
-        cep: "",
-        estado: "",
-        cidade: "",
-        bairro: "",
-        endereco: "",
-        numero: "",
-    },
-})
-
-const { fetchCep, loadingCep } = useCep(values)
+const { fetchCep, loadingCep } = useCep(form)
 const isEdit = !!route.params.id
 
-if (isEdit) {
-    store.get(Number(route.params.id)).then((data) => {
-        setValues(data)
-    })
-}
+onMounted(async () => {
+    if (isEdit) {
+        const data = await store.get(Number(route.params.id))
+        form.value = data as Contact
+    }
+})
 
-const onSubmit = handleSubmit(async (formData: Contact) => {
+async function save() {
     try {
         if (isEdit) {
-            await store.update(Number(route.params.id), formData)
+            await store.update(Number(route.params.id), form.value)
         } else {
-            await store.create(formData)
+            await store.create(form.value)
         }
 
         toast.add({
@@ -162,5 +127,5 @@ const onSubmit = handleSubmit(async (formData: Contact) => {
             })
         }
     }
-})
+}
 </script>

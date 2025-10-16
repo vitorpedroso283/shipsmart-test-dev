@@ -14,7 +14,7 @@
                 </div>
 
                 <div class="flex items-center">
-                    <Dropdown v-model="locale" :options="languages" optionLabel="label" optionValue="value"
+                    <Select v-model="locale" :options="languages" optionLabel="label" optionValue="value"
                         class="w-28 text-sm" />
                 </div>
             </div>
@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import Dropdown from "primevue/dropdown"
+import Select from "primevue/select"
 import { useI18n } from "vue-i18n"
 
 const { t, locale } = useI18n()
