@@ -1,0 +1,28 @@
+# ------------------------------------------------------
+# Etapa base — Node + Vite
+# ------------------------------------------------------
+FROM node:20-alpine AS base
+
+WORKDIR /app
+
+# Copia apenas package.json e lock para cache (melhora cache do build)
+COPY frontend/package*.json ./
+
+# Instala dependências
+RUN npm install
+
+# Copia o restante do código do frontend
+COPY frontend/ .
+
+# ------------------------------------------------------
+# Copia .env.example -> .env
+# ------------------------------------------------------
+RUN if [ -f .env.example ]; then cp .env.example .env; fi
+
+# ------------------------------------------------------
+# Etapa de desenvolvimento
+# ------------------------------------------------------
+EXPOSE 5173
+
+# Comando padrão de desenvolvimento (mantém hot reload ativo)
+CMD ["npm", "run", "dev", "--", "--host"]

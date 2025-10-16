@@ -21,7 +21,7 @@
                 "tags": [
                     "Contatos"
                 ],
-                "summary": "Listar todos os contatos (paginado)",
+                "summary": "Listar todos os contatos (paginado e com busca)",
                 "operationId": "bc39494d59500e2d75e6f6648b43c8de",
                 "parameters": [
                     {
@@ -30,67 +30,92 @@
                         "description": "Itens por página (padrão: 10)",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Filtro de busca (nome, email, telefone, cidade ou estado)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "São Paulo"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Lista de contatos",
+                        "description": "Lista de contatos filtrada e paginada",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "current_page": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "example": 1
                                         },
                                         "data": {
                                             "type": "array",
                                             "items": {
                                                 "properties": {
                                                     "id": {
-                                                        "type": "integer"
+                                                        "type": "integer",
+                                                        "example": 1
                                                     },
                                                     "nome": {
-                                                        "type": "string"
+                                                        "type": "string",
+                                                        "example": "Vitor Pedroso"
                                                     },
                                                     "email": {
-                                                        "type": "string"
+                                                        "type": "string",
+                                                        "example": "vitor@example.com"
                                                     },
                                                     "telefone": {
-                                                        "type": "string"
+                                                        "type": "string",
+                                                        "example": "11999999999"
                                                     },
                                                     "cep": {
-                                                        "type": "string"
+                                                        "type": "string",
+                                                        "example": "01001000"
                                                     },
                                                     "estado": {
-                                                        "type": "string"
+                                                        "type": "string",
+                                                        "example": "SP"
                                                     },
                                                     "cidade": {
-                                                        "type": "string"
+                                                        "type": "string",
+                                                        "example": "São Paulo"
                                                     },
                                                     "bairro": {
-                                                        "type": "string"
+                                                        "type": "string",
+                                                        "example": "Sé"
                                                     },
                                                     "endereco": {
-                                                        "type": "string"
+                                                        "type": "string",
+                                                        "example": "Praça da Sé"
                                                     },
                                                     "numero": {
-                                                        "type": "string"
+                                                        "type": "string",
+                                                        "example": "100"
                                                     },
                                                     "created_at": {
                                                         "type": "string",
-                                                        "format": "date-time"
+                                                        "format": "date-time",
+                                                        "example": "2025-10-16T14:20:00Z"
                                                     }
                                                 },
                                                 "type": "object"
                                             }
                                         },
                                         "last_page": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "example": 5
                                         },
                                         "total": {
-                                            "type": "integer"
+                                            "type": "integer",
+                                            "example": 50
                                         }
                                     },
                                     "type": "object"
@@ -313,6 +338,32 @@
                     },
                     "500": {
                         "description": "Erro interno do servidor"
+                    }
+                }
+            }
+        },
+        "/api/contacts/export": {
+            "get": {
+                "tags": [
+                    "Contatos"
+                ],
+                "summary": "Exportar contatos selecionados para CSV",
+                "operationId": "05239cf0d5b80d80c3bb38ea5175309f",
+                "parameters": [
+                    {
+                        "name": "ids",
+                        "in": "query",
+                        "description": "IDs separados por vírgula dos contatos a exportar. Se omitido, exporta todos.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "1,2,3"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Arquivo CSV gerado"
                     }
                 }
             }

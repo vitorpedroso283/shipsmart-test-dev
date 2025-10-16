@@ -26,37 +26,46 @@ class ContactController extends Controller
     /**
      * @OA\Get(
      *     path="/api/contacts",
-     *     summary="Listar todos os contatos (paginado)",
+     *     summary="Listar todos os contatos (paginado e com busca)",
      *     tags={"Contatos"},
      *     @OA\Parameter(
      *         name="per_page",
      *         in="query",
      *         required=false,
      *         description="Itens por página (padrão: 10)",
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="integer", example=10)
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Filtro de busca (nome, email, telefone, cidade ou estado)",
+     *         @OA\Schema(type="string", example="São Paulo")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de contatos",
+     *         description="Lista de contatos filtrada e paginada",
      *         @OA\JsonContent(
-     *             @OA\Property(property="current_page", type="integer"),
-     *             @OA\Property(property="data", type="array",
+     *             @OA\Property(property="current_page", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
      *                 @OA\Items(
-     *                     @OA\Property(property="id", type="integer"),
-     *                     @OA\Property(property="nome", type="string"),
-     *                     @OA\Property(property="email", type="string"),
-     *                     @OA\Property(property="telefone", type="string"),
-     *                     @OA\Property(property="cep", type="string"),
-     *                     @OA\Property(property="estado", type="string"),
-     *                     @OA\Property(property="cidade", type="string"),
-     *                     @OA\Property(property="bairro", type="string"),
-     *                     @OA\Property(property="endereco", type="string"),
-     *                     @OA\Property(property="numero", type="string"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time")
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="nome", type="string", example="Vitor Pedroso"),
+     *                     @OA\Property(property="email", type="string", example="vitor@example.com"),
+     *                     @OA\Property(property="telefone", type="string", example="11999999999"),
+     *                     @OA\Property(property="cep", type="string", example="01001000"),
+     *                     @OA\Property(property="estado", type="string", example="SP"),
+     *                     @OA\Property(property="cidade", type="string", example="São Paulo"),
+     *                     @OA\Property(property="bairro", type="string", example="Sé"),
+     *                     @OA\Property(property="endereco", type="string", example="Praça da Sé"),
+     *                     @OA\Property(property="numero", type="string", example="100"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2025-10-16T14:20:00Z")
      *                 )
      *             ),
-     *             @OA\Property(property="last_page", type="integer"),
-     *             @OA\Property(property="total", type="integer")
+     *             @OA\Property(property="last_page", type="integer", example=5),
+     *             @OA\Property(property="total", type="integer", example=50)
      *         )
      *     )
      * )
