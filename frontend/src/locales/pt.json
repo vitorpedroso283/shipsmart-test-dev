@@ -26,6 +26,7 @@
     "no": "Não",
     "deleted_title": "Contato excluído",
     "deleted_success": "O contato foi removido com sucesso.",
+    "export_success": "Contatos exportados com sucesso.",
     "cancelled_title": "Ação cancelada",
     "cancelled_action": "Nenhuma exclusão foi realizada.",
     "success": "Sucesso",

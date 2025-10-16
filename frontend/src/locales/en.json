@@ -26,6 +26,7 @@
     "no": "No",
     "deleted_title": "Contact Deleted",
     "deleted_success": "The contact was successfully removed.",
+    "export_success": "Contacts exporteds successfully",
     "cancelled_title": "Action Cancelled",
     "cancelled_action": "No deletion was performed.",
     "success": "Success",
