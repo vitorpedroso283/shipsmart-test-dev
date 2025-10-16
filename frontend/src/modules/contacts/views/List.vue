@@ -24,7 +24,7 @@
             <Column field="cidade" :header="t('contacts.city')" />
             <Column field="estado" :header="t('contacts.state')" />
 
-            <Column :header="t('contacts.actions')" style="width: 8rem; text-align: center">
+            <Column :header="t('contacts.actions')" class="w-32 text-center">
                 <template #body="{ data }">
                     <div class="flex justify-center gap-2">
                         <Button icon="pi pi-pencil" text class="text-blue-600" @click="edit(data.id)" />
@@ -53,6 +53,7 @@ import DataTable from "primevue/datatable"
 import Column from "primevue/column"
 import InputText from "primevue/inputtext"
 import { useContactsStore } from "../store"
+import type { Contact } from "../types"
 
 const { t } = useI18n()
 const router = useRouter()
@@ -60,11 +61,12 @@ const store = useContactsStore()
 const confirm = useConfirm()
 const toast = useToast()
 
-const globalFilter = ref("")
-const rows = ref(10)
-const selectedItems = ref([])
+const globalFilter = ref<string>("")
+const rows = ref<number>(10)
+const selectedItems = ref<Contact[]>([])
 
-const rowsPerPageOptions = computed(() => {
+// Tipagem dinâmica para paginação
+const rowsPerPageOptions = computed<number[]>(() => {
     const options = [5, 10, 20, 50]
     if (store.total > 0) options.push(store.total)
     return options
@@ -72,6 +74,7 @@ const rowsPerPageOptions = computed(() => {
 
 onMounted(() => store.fetchAll())
 
+// Atualiza lista ao mudar filtro ou página
 watch([rows, globalFilter], () => {
     const perPage = rows.value === store.total ? store.total : rows.value
     store.fetchAll({
@@ -80,11 +83,11 @@ watch([rows, globalFilter], () => {
     })
 })
 
-function edit(id: number) {
+function edit(id: Contact["id"]) {
     router.push(`/contacts/${id}/edit`)
 }
 
-function confirmDelete(id: number) {
+function confirmDelete(id: Contact["id"]) {
     confirm.require({
         message: t("contacts.confirm_delete"),
         header: t("contacts.confirm_title"),
@@ -92,7 +95,7 @@ function confirmDelete(id: number) {
         acceptLabel: t("contacts.yes"),
         rejectLabel: t("contacts.no"),
         accept: async () => {
-            await store.remove(id)
+            await store.remove(id!)
             toast.add({
                 severity: "success",
                 summary: t("contacts.deleted_title"),
@@ -112,7 +115,7 @@ function confirmDelete(id: number) {
 }
 
 function exportSelected() {
-    const ids = selectedItems.value.map((i: any) => i.id);
+    const ids = selectedItems.value.map((i) => i.id!).filter(Boolean)
 
     if (!ids.length) {
         toast.add({
@@ -120,8 +123,8 @@ function exportSelected() {
             summary: t("contacts.export"),
             detail: t("contacts.no_selection"),
             life: 3000,
-        });
-        return;
+        })
+        return
     }
 
     toast.add({
@@ -129,7 +132,7 @@ function exportSelected() {
         summary: t("contacts.export"),
         detail: t("contacts.exporting"),
         life: 1500,
-    });
+    })
 
     store
         .exportCsv(ids)
@@ -139,7 +142,7 @@ function exportSelected() {
                 summary: t("contacts.export"),
                 detail: t("contacts.export_success"),
                 life: 3000,
-            });
+            })
         })
         .catch(() => {
             toast.add({
@@ -147,7 +150,7 @@ function exportSelected() {
                 summary: t("contacts.export"),
                 detail: t("contacts.export_error"),
                 life: 4000,
-            });
-        });
+            })
+        })
 }
 </script>
